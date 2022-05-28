@@ -1,92 +1,8 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 
-const boatsList = [
-  {
-    name: "Vulcan",
-    competing: false,
-    finishTime: null,
-    rating: 114
-  },
-  {
-    name: "Brizo",
-    competing: false,
-    finishTime: null,
-    rating: 114
-  },
-  {
-    name: "Rampage",
-    competing: false,
-    finishTime: null,
-    rating: 228,
-  },
-  {
-    name: "Satisfaction",
-    competing: false,
-    finishTime: null,
-    rating: 108
-  },
-  {
-    name: "HeadFirst 3",
-    competing: false,
-    finishTime: null,
-    rating: 48
-  },
-  {
-    name: "Babe",
-    competing: false,
-    finishTime: null,
-    rating: 81
-  },
-  {
-    name: "Chance",
-    competing: false,
-    finishTime: null,
-    rating: 216
-  },
-  {
-    name: "Intuition",
-    competing: false,
-    finishTime: null,
-    rating: 123
-  },
-  {
-    name: "Joyridin",
-    competing: false,
-    finishTime: null,
-    rating: 117
-  },
-  {
-    name: "Jubilation",
-    competing: false,
-    finishTime: null,
-    rating: 108
-  },
-  {
-    name: "Milagros",
-    competing: false,
-    finishTime: null,
-    rating: 228
-  },
-  {
-    name: "Point Eight",
-    competing: false,
-    finishTime: null,
-    rating: 117
-  },
-  
-];
-
-const sortedByName = boatsList.sort((a, b) => {
-  if (a.name < b.name) {
-    return -1;
-  }
-  if (a.name > b.name) {
-    return 1;
-  }
-  return 0;
-});
 
 const Race = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -96,7 +12,7 @@ const Race = () => {
     "Click below to Mark Start Time"
   );
 
-  const [boatsListState, setBoatsListState] = useState(sortedByName);
+  const [boatsListState, setBoatsListState] = useState();
 
   const handleStartTime = () => {
     const date = new Date();
@@ -146,6 +62,21 @@ const Race = () => {
     setStartTime(date.setHours(18, 35, 0));
   }, []);
 
+  useEffect(() => {
+    axios.get('/api/boatList').then(res => {
+      setBoatsListState(res.data.sort((a, b) => {
+        if (a.name < b.name) {
+          return -1;
+        }
+        if (a.name > b.name) {
+          return 1;
+        }
+        return 0;
+      }
+      ));
+    });
+  }, []);
+
   return (
     <div className={styles.container}>
       <Head>
@@ -180,7 +111,7 @@ const Race = () => {
           <div className="mt-4 w-full border min-h-16">
             <h2 className="text-lg">Competing Boats:</h2>
      
-            {boatsListState.map((boat, index) => {
+            {boatsListState?.map((boat, index) => {
               if (boat.competing) {
                 return (
                   <div className="flex md:flex-row w-full p-2" key={index}>
@@ -199,7 +130,7 @@ const Race = () => {
         <div className="drawer-side">
           <label htmlFor="my-drawer" className="drawer-overlay"></label>
           <ul className="p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
-            {boatsListState.map((boat, index) => (
+            {boatsListState?.map((boat, index) => (
               <div key={index} className="flex flex-row w-full">
               <li className="border-b py-4 w-full">
                 <label htmlFor={`checkbox-${index}`} className="">
