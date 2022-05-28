@@ -10,6 +10,12 @@ const boatsList = [
     rating: 114
   },
   {
+    name: "Brizo",
+    competing: false,
+    finishTime: null,
+    rating: 114
+  },
+  {
     name: "Rampage",
     competing: false,
     finishTime: null,
@@ -21,7 +27,55 @@ const boatsList = [
     finishTime: null,
     rating: 108
   },
-
+  {
+    name: "HeadFirst 3",
+    competing: false,
+    finishTime: null,
+    rating: 48
+  },
+  {
+    name: "Babe",
+    competing: false,
+    finishTime: null,
+    rating: 81
+  },
+  {
+    name: "Chance",
+    competing: false,
+    finishTime: null,
+    rating: 216
+  },
+  {
+    name: "Intuition",
+    competing: false,
+    finishTime: null,
+    rating: 123
+  },
+  {
+    name: "Joyridin",
+    competing: false,
+    finishTime: null,
+    rating: 117
+  },
+  {
+    name: "Jubilation",
+    competing: false,
+    finishTime: null,
+    rating: 108
+  },
+  {
+    name: "Milagros",
+    competing: false,
+    finishTime: null,
+    rating: 228
+  },
+  {
+    name: "Point Eight",
+    competing: false,
+    finishTime: null,
+    rating: 117
+  },
+  
 ];
 
 const sortedByName = boatsList.sort((a, b) => {
@@ -120,7 +174,7 @@ const Race = () => {
               </button>
             </div>
             <label htmlFor="my-drawer" className="btn btn-error drawer-button ">
-              Select Competing Boats
+              Add Boats to Race
             </label>
           </div>
           <div className="mt-4 w-full border min-h-16">
@@ -149,7 +203,7 @@ const Race = () => {
               <div key={index} className="flex flex-row w-full">
               <li className="border-b py-4 w-full">
                 <label htmlFor={`checkbox-${index}`} className="">
-                  {boat.name} - Racing: {" "}
+                  {boat.name}: {" "}
                 </label>
                 <input
                   type="checkbox"
@@ -170,7 +224,7 @@ const Race = () => {
             </div>
             ))}
             <label htmlFor="newBoat" className="">
-              Add Boat
+              Add New Boat:
             </label>
             <input type="text" id="newBoatName" className="p-4"/>
             <button className="btn btn-secondary bg-green-400 border-green-900 my-4" onClick={handleNewBoat}>Add to Race</button>
