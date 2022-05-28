@@ -40,7 +40,7 @@ const Race = () => {
 
   const [startTime, setStartTime] = useState(null);
   const [startTimeString, setStartTimeString] = useState(
-    "Click below to start Race Timer"
+    "Click below to Mark Start Time"
   );
 
   const [boatsListState, setBoatsListState] = useState(boatsList);
@@ -73,10 +73,12 @@ const Race = () => {
   const handleNewBoat = (e) => {
    const name = document.getElementById("newBoatName").value;
    if (name === "") {
+    document.getElementById("my-drawer").checked = false;
      return;
    }
    setBoatsListState([...boatsListState, { name: name, competing: true, finishTime: null, rating: null }]);
    document.getElementById("newBoatName").value = "";
+   document.getElementById("my-drawer").checked = false;
 }
 
   useEffect(() => {
@@ -104,15 +106,15 @@ const Race = () => {
           <div className="border text-center w-full">
             <div className="pt-2 text-center">
               <h2 className="pt-2">Current Time:</h2>
-              <h3 className="text-yellow-500 text-lg">
+              <h3 className="text-yellow-500 text-xl">
                 {currentTime.toLocaleTimeString()}
               </h3>
             </div>
             <div className="pt-2 text-center">
               <h2 className="pt-2">Race Start Time:</h2>
-              <h3 className="pb-2 text-green-400 text-lg">{startTimeString}</h3>
+              <h3 className="pb-2 text-green-400 text-xl">{startTimeString}</h3>
               <button
-                className="btn btn-secondary bg-green-400 border-green-900 mb-4"
+                className="btn btn-secondary bg-green-400 border-green-600 mb-4"
                 onClick={handleStartTime}
               >
                 Mark Start Time
@@ -128,11 +130,11 @@ const Race = () => {
             {boatsListState.map((boat, index) => {
               if (boat.competing) {
                 return (
-                  <div className="flex flex-row w-full p-2" key={index}>
-                    <div className="flex flex-row justify-between w-full items-center border">
+                  <div className="flex md:flex-row w-full p-2" key={index}>
+                    <div className="flex md:flex-row justify-between w-full items-center border">
                       <h3 className="text-lg">{boat.name}</h3>
-                      <p>Finish time: {boat.finishTime}</p>
-                      <button className="btn btn-error bg-red-400 border-red-900" id={index} onClick={handleFinishTime}>Mark Finish Time</button>
+                      <p className="text-green-400">Finish time: {boat.finishTime}</p>
+                      <button className="btn btn-sm md:btn-md btn-error bg-red-400 border-red-600" id={index} onClick={handleFinishTime}>Mark Finish Time</button>
                     </div>
                   </div>
                 );
@@ -171,7 +173,7 @@ const Race = () => {
             <label htmlFor="newBoat" className="">
               Add Boat
             </label>
-            <input type="text" id="newBoatName" className="p-4"/>
+            <input type="text" id="newBoatName" className="p-4" onKeyDown={ e.key === 'enter' ? handleNewBoat : null }/>
             <button className="btn btn-secondary bg-green-400 border-green-900 my-4" onClick={handleNewBoat}>Add to Race</button>
           </ul>
         </div>
