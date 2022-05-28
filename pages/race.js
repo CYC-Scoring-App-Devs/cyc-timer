@@ -121,6 +121,11 @@ const Race = () => {
                     onClick={() => {
                       const newStartTime =
                         document.getElementById("newStartTime").value;
+                        if (newStartTime === "") {
+                          setStartTimeString("Click below to Mark Start Time");
+                          setEditing(false);
+                          return;
+                        }
                       const date = new Date();
                       date.setHours(
                         newStartTime.split(":")[0],
@@ -137,7 +142,7 @@ const Race = () => {
                   </button>
                 </div>
               )}
-              {startTimeString === "Click below to Mark Start Time" ? (
+              {startTimeString === "Click below to Mark Start Time" || startTimeString === "Invalid Date" ? (
                 <button
                   className="btn btn-secondary bg-green-400 border-green-600 mb-4"
                   onClick={handleStartTime}
@@ -145,12 +150,14 @@ const Race = () => {
                   Mark Start Time
                 </button>
               ) : (
+                 !editing && (
                 <button
                   className="btn btn-secondary bg-yellow-400 border-yellow-500 mb-4"
                   onClick={editStartTime}
                 >
                   Edit Start Time
                 </button>
+              )
               )}
             </div>
 
@@ -229,6 +236,7 @@ const Race = () => {
             <button
               className="btn btn-secondary bg-green-400 border-green-900 my-4"
               onClick={handleNewBoat}
+              onTouchEnd={handleNewBoat}
             >
               Add to Race
             </button>
