@@ -1,6 +1,6 @@
-import Head from 'next/head'
-import Link from 'next/link'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Link from "next/link";
+import styles from "../styles/Home.module.css";
 
 export default function Home() {
   return (
@@ -17,22 +17,19 @@ export default function Home() {
         </h1>
 
         <Link href={"/race"}>
-        <button className="btn btn-info mt-6">Get Started</button>
+          <button className="btn btn-info mt-6">Get Started</button>
         </Link>
-
-
       </main>
 
       <footer className={styles.footer}>
-      <code className={styles.code}>
-          <a
+        <a
           href="https://acbconsulting.tech"
           target="_blank"
           rel="noopener noreferrer"
-         >ACB Consulting</a>
-        </code>
-        
+        >
+          by ACB Consulting
+        </a>
       </footer>
     </div>
-  )
+  );
 }
