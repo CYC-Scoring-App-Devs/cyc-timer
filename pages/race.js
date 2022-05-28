@@ -4,36 +4,35 @@ import styles from "../styles/Home.module.css";
 
 const boatsList = [
   {
-    name: "Boat 1",
+    name: "Vulcan",
     competing: false,
     finishTime: null,
-    rating: 100,
+    rating: 114
   },
   {
-    name: "Boat 2",
+    name: "Rampage",
     competing: false,
     finishTime: null,
-    rating: 50,
+    rating: 228,
   },
   {
-    name: "Boat 3",
+    name: "Satisfaction",
     competing: false,
     finishTime: null,
-    rating: 200,
+    rating: 108
   },
-  {
-    name: "Boat 4",
-    competing: false,
-    finishTime: null,
-    rating: 102,
-  },
-  {
-    name: "Boat 5",
-    competing: false,
-    finishTime: null,
-    rating: 75,
-  },
+
 ];
+
+const sortedByName = boatsList.sort((a, b) => {
+  if (a.name < b.name) {
+    return -1;
+  }
+  if (a.name > b.name) {
+    return 1;
+  }
+  return 0;
+});
 
 const Race = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -43,7 +42,7 @@ const Race = () => {
     "Click below to Mark Start Time"
   );
 
-  const [boatsListState, setBoatsListState] = useState(boatsList);
+  const [boatsListState, setBoatsListState] = useState(sortedByName);
 
   const handleStartTime = () => {
     const date = new Date();
