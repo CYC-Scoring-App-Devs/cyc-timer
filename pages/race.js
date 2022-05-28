@@ -3,9 +3,9 @@ import axios from "axios";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
 
-
 const Race = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [editing, setEditing] = useState(false);
 
   const [startTime, setStartTime] = useState(null);
   const [startTimeString, setStartTimeString] = useState(
@@ -20,9 +20,13 @@ const Race = () => {
     setStartTimeString(date.toLocaleTimeString());
   };
 
+  const editStartTime = () => {
+    setEditing(true);
+  };
+
   const handleFinishTime = (e) => {
     const finishTime = new Date();
-    
+
     const updatedBoatsList = boatsListState.map((boat) => {
       if (boat.name === boatsListState[e.target.id].name) {
         return {
@@ -32,21 +36,23 @@ const Race = () => {
       } else {
         return boat;
       }
-    }
-    );
+    });
     setBoatsListState(updatedBoatsList);
   };
 
   const handleNewBoat = (e) => {
-   const name = document.getElementById("newBoatName").value;
-   if (name === "") {
+    const name = document.getElementById("newBoatName").value;
+    if (name === "") {
+      document.getElementById("my-drawer").checked = false;
+      return;
+    }
+    setBoatsListState([
+      ...boatsListState,
+      { name: name, competing: true, finishTime: null, rating: null },
+    ]);
+    document.getElementById("newBoatName").value = "";
     document.getElementById("my-drawer").checked = false;
-     return;
-   }
-   setBoatsListState([...boatsListState, { name: name, competing: true, finishTime: null, rating: null }]);
-   document.getElementById("newBoatName").value = "";
-   document.getElementById("my-drawer").checked = false;
-}
+  };
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -61,17 +67,18 @@ const Race = () => {
   }, []);
 
   useEffect(() => {
-    axios.get('/api/boatList').then(res => {
-      setBoatsListState(res.data.sort((a, b) => {
-        if (a.name < b.name) {
-          return -1;
-        }
-        if (a.name > b.name) {
-          return 1;
-        }
-        return 0;
-      }
-      ));
+    axios.get("/api/boatList").then((res) => {
+      setBoatsListState(
+        res.data.sort((a, b) => {
+          if (a.name < b.name) {
+            return -1;
+          }
+          if (a.name > b.name) {
+            return 1;
+          }
+          return 0;
+        })
+      );
     });
   }, []);
 
@@ -94,29 +101,82 @@ const Race = () => {
             </div>
             <div className="pt-2 text-center">
               <h2 className="pt-2">Race Start Time:</h2>
-              <h3 className="pb-2 text-green-400 text-xl">{startTimeString}</h3>
-              <button
-                className="btn btn-secondary bg-green-400 border-green-600 mb-4"
-                onClick={handleStartTime}
+              <h3
+                className="pb-2 text-green-400 text-xl"
+                onDoubleClick={editStartTime}
               >
-                Mark Start Time
-              </button>
+                {startTimeString}
+              </h3>
+              {editing && (
+                <div className="pt-2 text-center">
+                  <h2 className="pt-2">New Start Time:</h2>
+                  <input
+                    type="time"
+                    step="1"
+                    className="border border-green-600"
+                    id="newStartTime"
+                  />
+                  <button
+                    className="btn btn-secondary bg-green-400 border-green-600 mb-4"
+                    onClick={() => {
+                      const newStartTime =
+                        document.getElementById("newStartTime").value;
+                      const date = new Date();
+                      date.setHours(
+                        newStartTime.split(":")[0],
+                        newStartTime.split(":")[1],
+                        newStartTime.split(":")[2],
+                        0
+                      );
+                      setStartTime(date);
+                      setStartTimeString(date.toLocaleTimeString());
+                      setEditing(false);
+                    }}
+                  >
+                    Save
+                  </button>
+                </div>
+              )}
+              {startTimeString === "Click below to Mark Start Time" ? (
+                <button
+                  className="btn btn-secondary bg-green-400 border-green-600 mb-4"
+                  onClick={handleStartTime}
+                >
+                  Mark Start Time
+                </button>
+              ) : (
+                <button
+                  className="btn btn-secondary bg-yellow-400 border-yellow-500 mb-4"
+                  onClick={editStartTime}
+                >
+                  Edit Start Time
+                </button>
+              )}
             </div>
+
             <label htmlFor="my-drawer" className="btn btn-error drawer-button ">
               Add Boats to Race
             </label>
           </div>
           <div className="mt-4 w-full border min-h-16">
             <h2 className="text-lg">Competing Boats:</h2>
-     
+
             {boatsListState?.map((boat, index) => {
               if (boat.competing) {
                 return (
                   <div className="flex md:flex-row w-full p-2" key={index}>
                     <div className="flex md:flex-row justify-between w-full items-center border">
                       <h3 className="text-lg">{boat.name}</h3>
-                      <p className="text-green-400">Finish time: {boat.finishTime}</p>
-                      <button className="btn btn-sm md:btn-md btn-error bg-red-400 border-red-600" id={index} onClick={handleFinishTime}>Mark Finish Time</button>
+                      <p className="text-green-400">
+                        Finish time: {boat.finishTime}
+                      </p>
+                      <button
+                        className="btn btn-sm md:btn-md btn-error bg-red-400 border-red-600"
+                        id={index}
+                        onClick={handleFinishTime}
+                      >
+                        Mark Finish Time
+                      </button>
                     </div>
                   </div>
                 );
@@ -130,33 +190,48 @@ const Race = () => {
           <ul className="p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
             {boatsListState?.map((boat, index) => (
               <div key={index} className="flex flex-row w-full">
-              <li className="border-b py-4 w-full">
-                <label htmlFor={`checkbox-${index}`} className="">
-                  {boat.name}: {" "}
-                </label>
-                <input
-                  type="checkbox"
-                  className="checkbox mx-8 p-4"
-                  id={`${index}`}
-                  checked={boat.competing}
-                  onChange={(e) => {
-                    setBoatsListState(
-                      boatsListState.map((boat, index) =>
-                        index === Number(e.target.id)
-                          ? { ...boat, competing: !boat.competing }
-                          : boat
-                      )
-                    );
-                  }}
-                />
-              </li>
-            </div>
+                <li className="border-b py-4 w-full">
+                  <label htmlFor={`checkbox-${index}`} className="">
+                    {boat.name}:{" "}
+                  </label>
+                  <input
+                    type="checkbox"
+                    className="checkbox mx-8 p-4"
+                    id={`${index}`}
+                    checked={boat.competing}
+                    onChange={(e) => {
+                      setBoatsListState(
+                        boatsListState.map((boat, index) =>
+                          index === Number(e.target.id)
+                            ? { ...boat, competing: !boat.competing }
+                            : boat
+                        )
+                      );
+                    }}
+                  />
+                </li>
+              </div>
             ))}
             <label htmlFor="newBoat" className="">
               Add New Boat:
             </label>
-            <input type="text" id="newBoatName" className="p-4"/>
-            <button className="btn btn-secondary bg-green-400 border-green-900 my-4" onClick={handleNewBoat}>Add to Race</button>
+            <input
+              type="text"
+              id="newBoatName"
+              className="p-4"
+              //handleNewBoat on enter key
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleNewBoat();
+                }
+              }}
+            />
+            <button
+              className="btn btn-secondary bg-green-400 border-green-900 my-4"
+              onClick={handleNewBoat}
+            >
+              Add to Race
+            </button>
           </ul>
         </div>
       </div>
