@@ -17,9 +17,7 @@ const Race = () => {
   const handleStartTime = () => {
     const date = new Date();
     setStartTime(date);
-    setStartTimeString(
-      `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
-    );
+    setStartTimeString(date.toLocaleTimeString());
   };
 
   const handleFinishTime = (e) => {
