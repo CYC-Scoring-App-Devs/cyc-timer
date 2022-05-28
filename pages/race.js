@@ -173,7 +173,7 @@ const Race = () => {
             <label htmlFor="newBoat" className="">
               Add Boat
             </label>
-            <input type="text" id="newBoatName" className="p-4" onKeyDown={ e.key === 'enter' ? handleNewBoat : null }/>
+            <input type="text" id="newBoatName" className="p-4"/>
             <button className="btn btn-secondary bg-green-400 border-green-900 my-4" onClick={handleNewBoat}>Add to Race</button>
           </ul>
         </div>
