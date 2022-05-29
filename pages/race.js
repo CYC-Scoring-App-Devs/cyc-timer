@@ -254,8 +254,8 @@ const Race = () => {
             <input
               type="text"
               id="newBoatName"
-              className="p-4"
-              //handleNewBoat on enter key
+              className="p-4 border rounded"
+              
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleNewBoat();
