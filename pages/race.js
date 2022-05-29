@@ -41,6 +41,17 @@ const Race = () => {
     setBoatsListState(updatedBoatsList);
   };
 
+  const handleReset = () => {
+    setStartTime(null);
+    setStartTimeString("Click below to Mark Start Time");
+    setBoatsListState( boatsListState.map((boat) => {
+      return {
+        ...boat,
+        finishTime: null,
+      };
+    }));
+  };
+
   const handleNewBoat = (e) => {
     const name = document.getElementById("newBoatName").value;
     if (name === "") {
@@ -121,30 +132,37 @@ const Race = () => {
                 <div className="pt-2 text-center">
                   <h2 className="pt-2">New Start Time:</h2>
                   <input
-                    type="time"
-                    step="1"
+                    type="time-local"
                     className="border border-green-600"
+                    // step="10"
                     id="newStartTime"
+                    onChange={(e) => {
+                      const date = e.target.value;
+                      // setStartTime(date);
+                      setStartTimeString(date);
+                    }
+                    }
+                    defaultValue={startTimeString}
                   />
                   <button
                     className="btn btn-secondary bg-green-400 border-green-600 mb-4"
                     onClick={() => {
-                      const newStartTime =
-                        document.getElementById("newStartTime").value;
-                        if (newStartTime === "") {
-                          setStartTimeString("Click below to Mark Start Time");
-                          setEditing(false);
-                          return;
-                        }
-                      const date = new Date();
-                      date.setHours(
-                        newStartTime.split(":")[0],
-                        newStartTime.split(":")[1],
-                        newStartTime.split(":")[2],
-                        0
-                      );
-                      setStartTime(date);
-                      setStartTimeString(date.toLocaleTimeString());
+                      // const newStartTime =
+                      //   document.getElementById("newStartTime").value;
+                      //   console.log(newStartTime);
+                      //   if (newStartTime === "") {
+                      //     setStartTimeString("Click below to Mark Start Time");
+                      //     setEditing(false);
+                      //     return;
+                      //   }
+                      // const date = new Date();
+                      // date.setHours(
+                      //   newStartTime.split(":")[0],
+                      //   newStartTime.split(":")[1],
+                      //   newStartTime.split(":")[2] ? newStartTime.split(":")[2] : 0
+                      // );
+                      // setStartTime(date);
+                      // setStartTimeString(date.toLocaleTimeString());
                       setEditing(false);
                     }}
                   >
@@ -200,7 +218,7 @@ const Race = () => {
               }
             })}
           </div>
-          
+          <button className="btn btn-error mt-8" onClick={handleReset}>reset</button>
         </div>
 
         <div className="drawer-side">
