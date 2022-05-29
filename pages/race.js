@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import Link from "next/link";
 import axios from "axios";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
@@ -46,10 +47,19 @@ const Race = () => {
       document.getElementById("my-drawer").checked = false;
       return;
     }
-    setBoatsListState([
-      ...boatsListState,
-      { name: name, competing: true, finishTime: null, rating: null },
-    ]);
+
+    axios.post("/api/new-boat", { name }).then((res) => {
+      setBoatsListState([
+        ...boatsListState,
+        {
+          id: res.data.id,
+          name: name,
+          competing: true,
+          finishTime: null,
+          rating: null,
+        },
+      ]);
+    });
     document.getElementById("newBoatName").value = "";
     document.getElementById("my-drawer").checked = false;
   };
@@ -67,7 +77,7 @@ const Race = () => {
   }, []);
 
   useEffect(() => {
-    axios.get("/api/boatList").then((res) => {
+    axios.get("/api/boat-list").then((res) => {
       setBoatsListState(
         res.data.sort((a, b) => {
           if (a.name < b.name) {
@@ -190,6 +200,7 @@ const Race = () => {
               }
             })}
           </div>
+          
         </div>
 
         <div className="drawer-side">
@@ -203,7 +214,7 @@ const Race = () => {
                   </label>
                   <input
                     type="checkbox"
-                    className="checkbox mx-8 p-4"
+                    className="checkbox checkbox-lg mx-8 p-4 bg-green-300 checkbox-primary"
                     id={`${index}`}
                     checked={boat.competing}
                     onChange={(e) => {
@@ -240,6 +251,11 @@ const Race = () => {
             >
               Add to Race
             </button>
+            <div className="mt-64">
+            <button className="btn btn-error  mb-4" onClick={handleNewBoat}>
+            <Link href="/admin">edit boat list</Link>
+            </button>
+          </div>
           </ul>
         </div>
       </div>

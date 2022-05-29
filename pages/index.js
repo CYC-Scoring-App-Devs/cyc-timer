@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Link from "next/link";
+import Image from "next/image";
 import styles from "../styles/Home.module.css";
 
 export default function Home() {
@@ -12,9 +13,14 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <a href="https://cyc.pe.ca/" target="_blank" rel="noreferrer" className="ml-6">
+      <Image src="/logo.png" width={175} height={100} alt="cyc logo" className=""/>
+      </a>
         <h1 className={styles.title}>
-          <a href="https://cyc.pe.ca">CYC</a> Race Timer
+         Race Timer
         </h1>
+
+        
 
         <Link href={"/race"}>
           <button className="btn btn-info mt-6">Get Started</button>
