@@ -7,13 +7,12 @@ import styles from "../styles/Home.module.css";
 const Race = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [editing, setEditing] = useState(false);
-
   const [startTime, setStartTime] = useState(null);
   const [startTimeString, setStartTimeString] = useState(
     "Click below to Mark Start Time"
   );
-
   const [boatsListState, setBoatsListState] = useState();
+  const [sortedByRating, setSortedByRating] = useState();
 
   const handleStartTime = () => {
     const date = new Date();
@@ -29,7 +28,7 @@ const Race = () => {
     const finishTime = new Date();
 
     const updatedBoatsList = boatsListState.map((boat) => {
-      if (boat.name === boatsListState[e.target.id].name) {
+      if (boat.id === e.target.id) {
         return {
           ...boat,
           finishTime: finishTime.toLocaleTimeString(),
@@ -103,6 +102,24 @@ const Race = () => {
     });
   }, []);
 
+  useEffect(() => {
+    if (boatsListState) {
+      const sorted = [...boatsListState];
+      sorted.sort((a, b) => {
+        if (a.rating < b.rating) {
+          return -1;
+        }
+        if (a.rating > b.rating) {
+          return 1;
+        }
+        return 0;
+      }
+      );
+      setSortedByRating(sorted);
+    }
+  }, [boatsListState, setSortedByRating]);
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -134,11 +151,11 @@ const Race = () => {
                   <input
                     type="time-local"
                     className="border border-green-600"
-                    // step="10"
+                    
                     id="newStartTime"
                     onChange={(e) => {
                       const date = e.target.value;
-                      // setStartTime(date);
+                
                       setStartTimeString(date);
                     }
                     }
@@ -147,22 +164,6 @@ const Race = () => {
                   <button
                     className="btn btn-secondary bg-green-400 border-green-600 mb-4"
                     onClick={() => {
-                      // const newStartTime =
-                      //   document.getElementById("newStartTime").value;
-                      //   console.log(newStartTime);
-                      //   if (newStartTime === "") {
-                      //     setStartTimeString("Click below to Mark Start Time");
-                      //     setEditing(false);
-                      //     return;
-                      //   }
-                      // const date = new Date();
-                      // date.setHours(
-                      //   newStartTime.split(":")[0],
-                      //   newStartTime.split(":")[1],
-                      //   newStartTime.split(":")[2] ? newStartTime.split(":")[2] : 0
-                      // );
-                      // setStartTime(date);
-                      // setStartTimeString(date.toLocaleTimeString());
                       setEditing(false);
                     }}
                   >
@@ -196,18 +197,20 @@ const Race = () => {
           <div className="mt-4 w-full border min-h-16">
             <h2 className="text-lg">Competing Boats:</h2>
 
-            {boatsListState?.map((boat, index) => {
+            {sortedByRating?.map((boat, index) => {
               if (boat.competing) {
                 return (
                   <div className="flex md:flex-row w-full p-2" key={index}>
-                    <div className="flex md:flex-row justify-between w-full items-center border">
-                      <h3 className="text-lg">{boat.name}</h3>
-                      <p className="text-green-400">
+                    <div className="flex  flex-col md:flex-row justify-between w-full items-center border">
+                      <h3 className="text-lg w-1/4">{boat.name}</h3>
+                      {/* <h3 className="text-lg hidden md:block">Sail#: {""}</h3> */}
+                      <h3 className="text-lg hidden md:block md:w-1/4">Rating: {boat.rating}</h3>
+                      <p className="text-green-400 md:w-1/4">
                         Finish time: {boat.finishTime}
                       </p>
                       <button
                         className="btn btn-sm md:btn-md btn-error bg-red-400 border-red-600"
-                        id={index}
+                        id={boat.id}
                         onClick={handleFinishTime}
                       >
                         Mark Finish Time
@@ -221,6 +224,7 @@ const Race = () => {
           <button className="btn btn-error mt-8" onClick={handleReset}>reset</button>
         </div>
 
+      {/* sidebar */}
         <div className="drawer-side">
           <label htmlFor="my-drawer" className="drawer-overlay"></label>
           <ul className="p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
@@ -276,6 +280,7 @@ const Race = () => {
           </div>
           </ul>
         </div>
+
       </div>
     </div>
   );
