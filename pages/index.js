@@ -23,7 +23,10 @@ export default function Home() {
         
 
         <Link href={"/race"}>
-          <button className="btn btn-info mt-6">Get Started</button>
+          <button className="btn btn-info mt-6">Time a Race</button>
+        </Link>
+        <Link href={"/course-list"}>
+          <button className="btn btn-info mt-6">Course List</button>
         </Link>
       </main>
 
