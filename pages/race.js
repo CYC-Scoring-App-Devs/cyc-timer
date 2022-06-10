@@ -131,7 +131,7 @@ const Race = () => {
         <input id="my-drawer" type="checkbox" className="drawer-toggle" />
         <div className="drawer-content">
           <div className="border text-center w-full">
-            <div className="pt-2 text-center">
+            <div className="pt-2 text-center border">
               <h2 className="pt-2">Current Time:</h2>
               <h3 className="text-yellow-500 text-xl">
                 {currentTime.toLocaleTimeString()}
@@ -208,13 +208,15 @@ const Race = () => {
                       <p className="text-green-400 md:w-1/4">
                         Finish time: {boat.finishTime}
                       </p>
+    
                       <button
-                        className="btn btn-sm md:btn-md btn-error bg-red-400 border-red-600"
+                        className="btn btn-sm md:btn-md btn-error bg-red-400 border-red-600 "
                         id={boat.id}
                         onClick={handleFinishTime}
                       >
                         Mark Finish Time
                       </button>
+
                     </div>
                   </div>
                 );
