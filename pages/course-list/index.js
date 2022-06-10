@@ -3,12 +3,21 @@ import axios from "axios";
 
 const CourseList = () => {
   const [courseCats, setCourseCats] = useState([]);
+  const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     axios.get("/api/courses/course-cats").then((response) => {
       const resArray = response.data.sort((a, b) => a.name.localeCompare(b.name));
       setCourseCats(resArray);
     });
+  }, []);
+
+  useEffect(() => {
+    axios.get("/api/courses/course-list").then((response) => {
+      const resArray = response.data.sort((a, b) => a.name.localeCompare(b.name));
+      setCourses(resArray);
+    }
+    );
   }, []);
 
     return (
