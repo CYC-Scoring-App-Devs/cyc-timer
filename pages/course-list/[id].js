@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image";
+import Link from "next/link";
 import axios from "axios";
+
 
 const RaceID = () => {
   const [courseDetails, setCourseDetails] = useState({});
@@ -29,7 +32,7 @@ const RaceID = () => {
   }, [id]);
 
   return (
-    <div className="">
+    <div className="min-h-screen">
       {loading && (
         <div className="text-center p-12">
           <span>Loading...</span>
@@ -44,6 +47,7 @@ const RaceID = () => {
 
       {!loading && !error && (
         <div className="text-center">
+          <Image src="/logo.png" width={175} height={100} alt="cyc logo" className=""/>
           <h1 className="pt-6 text-xl font-bold">
             Course: {courseDetails[0].name}
           </h1>
@@ -57,6 +61,11 @@ const RaceID = () => {
           </ul>
         </div>
       )}
+    <div className="text-center p-3">
+        <button className="bg-transparent hover:bg-primary text-primary hover:text-white py-2 px-4 border border-primary hover:border-transparent">
+        <Link href="/course-list">Course List</Link>
+        </button>
+    </div>
     </div>
   );
 };
