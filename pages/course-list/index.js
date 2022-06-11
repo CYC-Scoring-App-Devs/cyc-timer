@@ -2,56 +2,37 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Link from "next/link";
 import Image from "next/image";
+import db from "../../utils/db";
 
-const CourseList = () => {
-  const [courseCats, setCourseCats] = useState([]);
-  const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
+const CourseList = ({ courses, courseCats }) => {
   const [viewCat, setViewCat] = useState("");
-
-  useEffect(() => {
-    axios.get("/api/courses/course-cats").then((response) => {
-      const resArray = response.data.sort((a, b) =>
-        a.name.localeCompare(b.name)
-      );
-      setCourseCats(resArray);
-      setLoading(false);
-    });
-  }, []);
-
-  useEffect(() => {
-    axios.get("/api/courses/course-list").then((response) => {
-      const resArray = response.data.sort((a, b) =>
-        a.name.localeCompare(b.name)
-      );
-      setCourses(resArray);
-    });
-  }, []);
 
   const displayCat = (e) => {
     setViewCat(e.target.id);
-  }
+  };
 
   return (
     <div className="">
-      {loading ? (
-        <div className="text-center p-12">
-          <span>Loading...</span>
-        </div>
-      ) : (
-        <div className="text-center p-3">
-          <Image src="/logo.png" width={175} height={100} alt="cyc logo" className=""/>
-          <h1 className="p-6 text-xl font-bold">CYC Race Courses</h1>
-          <ul>
-            {courseCats.map((courseCat) => (
-              <li
-                key={courseCat.id}
-                className="p-2 underline"
+      <div className="text-center p-3">
+        <Image
+          src="/logo.png"
+          width={175}
+          height={100}
+          alt="cyc logo"
+          className=""
+        />
+        <h1 className="p-6 text-xl font-bold">CYC Race Courses</h1>
+        <ul>
+          {courseCats.map((courseCat) => (
+            <li key={courseCat.id} className="p-2 underline">
+              <button
+                id={courseCat.name}
+                onClick={displayCat}
+                className="bg-transparent rounded hover:bg-primary text-primary hover:text-white py-2 px-4 border border-primary hover:border-transparent min-w-full"
               >
-                <button id={courseCat.name} onClick={displayCat} className="bg-transparent rounded hover:bg-primary text-primary hover:text-white py-2 px-4 border border-primary hover:border-transparent">
-                  {courseCat.description}
-                </button>
-                { viewCat === courseCat.name ? (
+                {courseCat.description}
+              </button>
+              {viewCat === courseCat.name ? (
                 <ul>
                   {courses
                     .filter((course) => course.category === courseCat.name)
@@ -60,21 +41,45 @@ const CourseList = () => {
                         <Link
                           href="/course-list/[id]"
                           as={`/course-list/${course.id}`}
-                          
                         >
                           {course.name}
                         </Link>
                       </li>
                     ))}
                 </ul>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
+
+export async function getStaticProps() {
+  const coursesRes = await db.collection("courses").get();
+  const courses = coursesRes.docs.map((doc) => {
+    return {
+      id: doc.id,
+      ...doc.data(),
+    };
+  });
+
+  courses.sort((a, b) => a.name.localeCompare(b.name));
+
+  const cats = await db.collection("course-categories").get();
+  const courseCats = cats.docs.map((doc) => {
+    return {
+      id: doc.id,
+      ...doc.data(),
+    };
+  });
+  courseCats.sort((a, b) => a.name.localeCompare(b.name));
+
+  return {
+    props: { courses, courseCats },
+    revalidate: 60,
+  };
+}
 
 export default CourseList;
