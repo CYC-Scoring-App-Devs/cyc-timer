@@ -3,8 +3,9 @@ import Link from "next/link";
 import axios from "axios";
 import Head from "next/head";
 import styles from "../styles/Home.module.css";
+import db from "../utils/db";
 
-const Race = () => {
+const Race = ({ boats }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [editing, setEditing] = useState(false);
   const [startTime, setStartTime] = useState(null);
@@ -43,12 +44,14 @@ const Race = () => {
   const handleReset = () => {
     setStartTime(null);
     setStartTimeString("Click below to Mark Start Time");
-    setBoatsListState( boatsListState.map((boat) => {
-      return {
-        ...boat,
-        finishTime: null,
-      };
-    }));
+    setBoatsListState(
+      boatsListState.map((boat) => {
+        return {
+          ...boat,
+          finishTime: null,
+        };
+      })
+    );
   };
 
   const handleNewBoat = (e) => {
@@ -87,22 +90,6 @@ const Race = () => {
   }, []);
 
   useEffect(() => {
-    axios.get("/api/boat-list").then((res) => {
-      setBoatsListState(
-        res.data.sort((a, b) => {
-          if (a.name < b.name) {
-            return -1;
-          }
-          if (a.name > b.name) {
-            return 1;
-          }
-          return 0;
-        })
-      );
-    });
-  }, []);
-
-  useEffect(() => {
     if (boatsListState) {
       const sorted = [...boatsListState];
       sorted.sort((a, b) => {
@@ -113,12 +100,15 @@ const Race = () => {
           return 1;
         }
         return 0;
-      }
-      );
+      });
       setSortedByRating(sorted);
     }
   }, [boatsListState, setSortedByRating]);
 
+  useEffect(() => {
+    setBoatsListState(boats.sort((a, b) => a.name.localeCompare(b.name)));
+  }
+  , [boats, setBoatsListState]);
 
   return (
     <div className={styles.container}>
@@ -151,14 +141,12 @@ const Race = () => {
                   <input
                     type="time-local"
                     className="border border-green-600"
-                    
                     id="newStartTime"
                     onChange={(e) => {
                       const date = e.target.value;
-                
+
                       setStartTimeString(date);
-                    }
-                    }
+                    }}
                     defaultValue={startTimeString}
                   />
                   <button
@@ -171,7 +159,8 @@ const Race = () => {
                   </button>
                 </div>
               )}
-              {startTimeString === "Click below to Mark Start Time" || startTimeString === "Invalid Date" ? (
+              {startTimeString === "Click below to Mark Start Time" ||
+              startTimeString === "Invalid Date" ? (
                 <button
                   className="btn btn-secondary bg-green-400 border-green-600 mb-4"
                   onClick={handleStartTime}
@@ -179,14 +168,14 @@ const Race = () => {
                   Mark Start Time
                 </button>
               ) : (
-                 !editing && (
-                <button
-                  className="btn btn-secondary bg-yellow-400 border-yellow-500 mb-4"
-                  onClick={editStartTime}
-                >
-                  Edit Start Time
-                </button>
-              )
+                !editing && (
+                  <button
+                    className="btn btn-secondary bg-yellow-400 border-yellow-500 mb-4"
+                    onClick={editStartTime}
+                  >
+                    Edit Start Time
+                  </button>
+                )
               )}
             </div>
 
@@ -204,11 +193,13 @@ const Race = () => {
                     <div className="flex  flex-col md:flex-row justify-between w-full items-center border">
                       <h3 className="text-lg w-1/4">{boat.name}</h3>
                       {/* <h3 className="text-lg hidden md:block">Sail#: {""}</h3> */}
-                      <h3 className="text-lg hidden md:block md:w-1/4">Rating: {boat.rating}</h3>
+                      <h3 className="text-lg hidden md:block md:w-1/4">
+                        Rating: {boat.rating}
+                      </h3>
                       <p className="text-green-400 md:w-1/4">
                         Finish time: {boat.finishTime}
                       </p>
-    
+
                       <button
                         className="btn btn-sm md:btn-md btn-error bg-red-400 border-red-600 "
                         id={boat.id}
@@ -216,17 +207,18 @@ const Race = () => {
                       >
                         Mark Finish Time
                       </button>
-
                     </div>
                   </div>
                 );
               }
             })}
           </div>
-          <button className="btn btn-error mt-8" onClick={handleReset}>reset</button>
+          <button className="btn btn-error mt-8" onClick={handleReset}>
+            reset
+          </button>
         </div>
 
-      {/* sidebar */}
+        {/* sidebar */}
         <div className="drawer-side">
           <label htmlFor="my-drawer" className="drawer-overlay"></label>
           <ul className="p-4 overflow-y-auto w-80 bg-base-100 text-base-content">
@@ -261,7 +253,6 @@ const Race = () => {
               type="text"
               id="newBoatName"
               className="p-4 border rounded"
-              
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleNewBoat();
@@ -276,16 +267,30 @@ const Race = () => {
               Add to Race
             </button>
             <div className="mt-64">
-            <button className="btn btn-error  mb-4" onClick={handleNewBoat}>
-            <Link href="/admin">edit boat list</Link>
-            </button>
-          </div>
+              <button className="btn btn-error  mb-4" onClick={handleNewBoat}>
+                <Link href="/admin">edit boat list</Link>
+              </button>
+            </div>
           </ul>
         </div>
-
       </div>
     </div>
   );
 };
+
+export async function getStaticProps() {
+  const boats = await db.collection("boats").get();
+  const boatList = boats.docs.map((doc) => {
+    return {
+      id: doc.id,
+      ...doc.data(),
+    };
+  });
+  return {
+    props: {
+      boats: boatList,
+    },
+  };
+}
 
 export default Race;
