@@ -5,7 +5,7 @@ import Link from "next/link";
 import axios from "axios";
 
 
-const RaceID = () => {
+const CourseId = () => {
   const [courseDetails, setCourseDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -46,19 +46,26 @@ const RaceID = () => {
       )}
 
       {!loading && !error && (
-        <div className="text-center">
+        <div className="flex flex-col items-center">
+        <div className="text-center ">
           <Image src="/logo.png" width={175} height={100} alt="cyc logo" className=""/>
           <h1 className="pt-6 text-xl font-bold">
             Course: {courseDetails[0].name}
           </h1>
           <p className="p-2 text-xs">Length: ~{courseDetails[0].distance}NM</p>
           <ul className="list-disc p-3 border">
-            {courseDetails[0].course.map((mark) => (
-              <li key={mark} className="p-2">
+            {courseDetails[0].course.map((mark, index) => (
+              <li key={index} className="p-2">
                 {mark}
               </li>
             ))}
           </ul>
+          {courseDetails[0]?.map && (
+          <div className="border">
+          <img src={courseDetails[0].map} width={500} height={500} alt="course image" className=""/>
+          </div>
+          )}
+        </div>
         </div>
       )}
     <div className="text-center p-3">
@@ -70,4 +77,4 @@ const RaceID = () => {
   );
 };
 
-export default RaceID;
+export default CourseId;
