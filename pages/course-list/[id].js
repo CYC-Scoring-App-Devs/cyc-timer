@@ -57,7 +57,7 @@ const CourseId = ({ courseDetails }) => {
 export async function getStaticPaths() {
   const res = await axios.get("https://cyc-timer.herokuapp.com/api/courses/course-list");
   const paths = res.data.map((course) => ({ params: { id: course.id } }));
-  return { paths, fallback: true };
+  return { paths, fallback: false };
 }
 
 export async function getStaticProps({ params }) {
