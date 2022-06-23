@@ -23,7 +23,7 @@ const CourseId = ({ courseDetails }) => {
             <p className="p-2 text-xs">
               Length: ~{courseDetails[0].distance}NM
             </p>
-            <ul className="list-disc p-3 border">
+            <ul className="list-none p-3 border">
               {courseDetails[0].course.map((mark, index) => (
                 <li key={index} className="p-2">
                   {mark}
